@@ -2,16 +2,19 @@ body{
   margin: 0;
   padding: 0;
   font-family: 'Roboto Mono', monospace;
+  background-color: #F9F9F9;
 }
 
 .main-wrapper{
   max-width: 40em;
   margin : auto;
   margin-top: 20px;
+  margin-bottom: 20px;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
   padding: 0.5em 2em;
   display: flex;
   flex-direction: column;
+  background-color: white;
 }
 .main-wrapper .balance-wrapper{
   display: flex;

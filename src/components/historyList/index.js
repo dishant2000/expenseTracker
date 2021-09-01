@@ -1,9 +1,9 @@
 import React from 'react'
 import './index.css'
 function HistoryList(props) {
-    const {dataList} = props
+    const {tableref, dataList} = props
     return (
-        <table className = "dataTable">
+        <table ref = {tableref} className = "dataTable">
             <thead>
                 <tr>
                     <th>Title</th>

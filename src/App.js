@@ -2,18 +2,22 @@ import {useState,useEffect,useRef} from 'react'
 import './App.css';
 import Card from './components/card';
 import HistoryList from './components/historyList';
-import data from './data'
+import database from './data'
 import ExpenseForm from './components/expenseForm';
+import jsPDF from 'jspdf';
+import BarChart from './components/barChart';
+const s = JSON.stringify(database);
+const data = JSON.parse(s);
 function App() {
   const formToggleButton = useRef(null);
   const formMain = useRef(null);
+  const searchBar = useRef(null);
+  const dataTable = useRef(null);
   const [totalMoney, setTotalMoney] = useState(data.total);
   const [totalIncome, setTotalIncome] = useState(data.totalIncome);
   const [totalExpense, setTotalExpense] = useState(data.totalExpense);
   const [datalist, setDatalist] = useState(data.transactions);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  
-
   const getTodayDate = ()=>{
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -29,29 +33,52 @@ function App() {
     let currentTotal = totalMoney;
     if(formMain.current['transType'].value === 'income'){
       currentTotal += currAmount;
-      setTotalIncome(totalIncome + currAmount);
+      
     }
     else if(formMain.current['transType'].value === 'expense'){
       currentTotal -= currAmount;
-      setTotalExpense(totalExpense + currAmount);
+      
     }
     else{
       return;
     }
+    
     const newData = {
       title : formMain.current['title'].value,
       date : getTodayDate(),
       amount : currAmount,
       type : formMain.current['transType'].value
     }
-    setTotalMoney(currentTotal);
     const newDataList = [...datalist];
     newDataList.push(newData);
+    data.totalExpense = totalExpense + currAmount;
+    data.totalIncome = totalIncome + currAmount;
+    data.total = currentTotal;
+    data.transactions = [...newDataList];
+    setTotalIncome(totalIncome + currAmount);
+    setTotalExpense(totalExpense + currAmount);
+    setTotalMoney(currentTotal);
     setDatalist(newDataList);
     formMain.current.reset();
   }
+  const searchHandler = (e)=>{
+    e.preventDefault();
+    let searchStr = searchBar.current.value;
+
+    let newList = data.transactions.filter(item => item.title.includes(searchStr));
+    setDatalist(newList);
+  }
+  const exportHandler = ()=>{
+    console.log(dataTable.current);
+    const doc = new jsPDF('p', 'pt','a4',true);
+    doc.html(dataTable.current,{
+      callback : function(doc){
+        doc.save("my-expense.pdf");
+      },
+      margin : [10,10,10,10]
+    });
+  }
   useEffect(() => {
-    
   }, [])
   return (
     <div className = "main-wrapper">
@@ -74,13 +101,19 @@ function App() {
         <Card type = "Expense" cash = {totalExpense} />
         <Card type = "Income" cash = {totalIncome} />
       </div>
+      <div>
+        <BarChart datalist = {datalist}/>
+      </div>
       <div className = "history-wrapper">
+        <div style = {{display : "flex", width : "100%",justifyContent : "space-between", alignItems : "center"}}>
         <h3>History</h3>
+        <button onClick = {exportHandler} style = {{backgroundColor : "black", color : "white", borderRadius : "5px", cursor : "pointer"}}>export</button>
+        </div>
         <div className = "history-search">
-          <input className = "search-input" placeholder = "search"></input>
+          <input ref = {searchBar} onChange = {searchHandler} className = "search-input" placeholder = "search"></input>
         </div>
         <div className = "history-list">
-          <HistoryList dataList = {datalist}/>
+          <HistoryList tableref = {dataTable} dataList = {datalist}/>
         </div>
       </div>
     </div>

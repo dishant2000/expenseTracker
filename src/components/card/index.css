@@ -1,0 +1,25 @@
+.card-wrapper{
+    margin: 20px 0;
+    padding: 10px 25px;
+    width: 100px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;    
+    border-radius: 5px;
+    justify-content: center;
+    transition: all 800ms;
+
+}
+.card-wrapper:hover{
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;}
+.card-wrapper .card-header{
+    font-weight: 500;
+    font-size: smaller;
+    color: rgb(112, 112, 112);
+}
+.card-wrapper .card-Body{
+    font-size: large;
+    font-weight: 700;
+}

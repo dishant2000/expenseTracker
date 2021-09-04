@@ -1,7 +1,7 @@
 import React from 'react'
 import './index.css'
 function HistoryList(props) {
-    const {tableref, dataList} = props
+    const {tableref, dataList,currency,inrToUsd} = props
     return (
         <table ref = {tableref} className = "dataTable">
             <thead>
@@ -19,7 +19,7 @@ function HistoryList(props) {
                                 <td>{transaction.title}</td>
                                 <td>{transaction.date}</td>
                                 <td style = {transaction.type === 'income' ? {borderRight : "5px green solid"} : {borderRight : "5px red solid"}}>
-                                    <span>{transaction.amount}</span>
+                                    <span>{currency === 'INR' ? transaction.amount : inrToUsd(transaction.amount)}</span>
                                 </td>
                             </tr>
                         )

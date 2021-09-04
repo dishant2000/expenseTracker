@@ -2,7 +2,7 @@ import React,{useState,useEffect} from 'react'
 import {Bar} from 'react-chartjs-2'
 import './index.css'
 function BarChart(props) {
-    const {datalist} = props;
+    const {datalist,currency, inrToUsd} = props;
     const [income,setIncome] = useState([]);
     const [expense,setExpense] = useState([]);
     useEffect(() => {
@@ -22,10 +22,10 @@ function BarChart(props) {
             let tmonth = parseInt(temp[1]);
             let tyear = parseInt(temp[2]);
             if(item.type === 'income' && tyear === currentYear){
-                incomeData[tmonth - 1] += parseInt(item.amount);
+                incomeData[tmonth - 1] += currency === 'INR' ? parseInt(item.amount) : inrToUsd(parseInt(item.amount));
             }
             else if(item.type === 'expense' && tyear === currentYear){
-                expenseData[tmonth - 1] += parseInt(item.amount);
+                expenseData[tmonth - 1] += currency === 'INR' ? parseInt(item.amount) : inrToUsd(parseInt(item.amount));
             }
         })
         setIncome(incomeData);

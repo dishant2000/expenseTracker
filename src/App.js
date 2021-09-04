@@ -6,6 +6,7 @@ import database from './data'
 import ExpenseForm from './components/expenseForm';
 import jsPDF from 'jspdf';
 import BarChart from './components/barChart';
+import CurrencySelector from './components/currencySelect';
 const s = JSON.stringify(database);
 const data = JSON.parse(s);
 function App() {
@@ -18,6 +19,7 @@ function App() {
   const [totalExpense, setTotalExpense] = useState(data.totalExpense);
   const [datalist, setDatalist] = useState(data.transactions);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [currency, setCurrency] = useState("INR");
   const getTodayDate = ()=>{
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -29,7 +31,8 @@ function App() {
   }
   const onFormSubmitHandler = (e) => {
     e.preventDefault();
-    let currAmount = parseInt(formMain.current['amount'].value);
+    let currCurrency = formMain.current["currencySelect"].value;
+    let currAmount = currCurrency === 'INR' ? parseInt(formMain.current['amount'].value) : usdToInr(parseInt(formMain.current['amount'].value));
     let currentTotal = totalMoney;
     if(formMain.current['transType'].value === 'income'){
       currentTotal += currAmount;
@@ -78,6 +81,14 @@ function App() {
       margin : [10,10,10,10]
     });
   }
+  const inrToUsd = (cash)=>{
+    cash = parseInt(cash);
+    return parseInt(cash/72);
+  }
+  const usdToInr = (cash)=>{
+    cash = parseInt(cash);
+    return parseInt(cash*72);
+  }
   useEffect(() => {
   }, [])
   return (
@@ -90,20 +101,24 @@ function App() {
       <div className = "balance-wrapper"> 
           <div className = "curr-balance">
             <span style = {{fontSize : "smaller",fontWeight : "500"}}>YOUR BALANCE</span><br/>
-            <span style = {{fontSize :"x-large",fontWeight : "bold"}}>Rs {totalMoney}</span>
+            <span style = {{fontSize :"x-large",fontWeight : "bold",margin : "0 10px"}}>{currency === 'INR' ? 'Rs' : "$"} {currency === 'INR' ? totalMoney : inrToUsd(totalMoney)}</span>
+            <CurrencySelector setCurrency = {setCurrency}/>
           </div>
           <button ref = {formToggleButton} className = "add-exp" onClick = {()=>{setIsFormOpen(!isFormOpen)}}>
             {isFormOpen ? <span>X</span> : <span>Add</span>}
           </button>
       </div>
       {isFormOpen ? <ExpenseForm allRef = {{formMain}} formSubmitHandler = {onFormSubmitHandler}/>:null}
+      {/*income and expense cards section */}
       <div className = "exp-display">
-        <Card type = "Expense" cash = {totalExpense} />
-        <Card type = "Income" cash = {totalIncome} />
+        <Card type = "Expense" cash = {totalExpense} currency = {currency} inrToUsd = {inrToUsd}/>
+        <Card type = "Income" cash = {totalIncome} currency = {currency} inrToUsd = {inrToUsd}/>
       </div>
+      {/*bar chart*/}
       <div>
-        <BarChart datalist = {datalist}/>
+        <BarChart datalist = {datalist} currency = {currency} inrToUsd = {inrToUsd}/>
       </div>
+      {/*history panel*/}
       <div className = "history-wrapper">
         <div style = {{display : "flex", width : "100%",justifyContent : "space-between", alignItems : "center"}}>
         <h3>History</h3>
@@ -113,7 +128,7 @@ function App() {
           <input ref = {searchBar} onChange = {searchHandler} className = "search-input" placeholder = "search"></input>
         </div>
         <div className = "history-list">
-          <HistoryList tableref = {dataTable} dataList = {datalist}/>
+          <HistoryList tableref = {dataTable} dataList = {datalist} currency = {currency} inrToUsd = {inrToUsd}/>
         </div>
       </div>
     </div>

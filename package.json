@@ -1,5 +1,6 @@
 {
   "name": "expensetracker",
+  "homepage": "https://dishant2000.github.io/expensetracker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,6 +9,7 @@
     "@testing-library/user-event": "^12.1.10",
     "chart.js": "^3.5.1",
     "chartjs": "^0.3.24",
+    "gh-pages": "^6.1.0",
     "jspdf": "^2.3.1",
     "react": "^17.0.2",
     "react-chartjs-2": "^3.0.4",
@@ -17,6 +19,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
